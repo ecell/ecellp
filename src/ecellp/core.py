@@ -57,25 +57,24 @@ class Alignment(object):
         (start, end, stride) = coord
         value.set_attributes(start=start, end=end, stride=stride)
         func = lambda attrs: attrs + [value]
-        map_region(func, self.__attributes, start, end, stride, self.is_cyclic())
+        map_region(func, self.__attributes, coord, self.is_cyclic())
 
-    def query_domains_by_region(self, *coord):
-        (start, end, stride) = coord
-        domains = get_region(self.__attributes, start, end, stride, self.is_cyclic())
+    def query_domains_by_region(self, *region):
+        domains = get_region(self.__attributes, region, self.is_cyclic())
         return list(set(sum(domains, [])))
 
     def sequence(self, *region):
         if len(region) == 0:
             return self.__seq
         elif len(region) == 3:
-            (start, end, stride) = region
+            (_, _, stride) = region
             if stride > 0:
                 return get_region(
-                    self.__seq, start, end, stride, self.is_cyclic())
+                    self.__seq, region, self.is_cyclic())
             else:
                 return reverse_sequence(
                     get_region(
-                        self.__seq, start, end, stride, self.is_cyclic()))
+                        self.__seq, region, self.is_cyclic()))
         else:
             raise ValueError, "Invalid arguments [%s]" % (str(region))
 
@@ -152,13 +151,13 @@ class Track(object):
 
     def place_domain(self, dom, *coord):
         if len(coord) == 3:
-            region = (coord[0], coord[1], coord[2], self.is_cyclic())
+            region = coord
         elif len(coord) == 1:
-            region = (coord[0], coord[0], +1, self.is_cyclic())
+            region = (coord[0], coord[0], +1)
         else:
             raise RuntimeError, "Invalid arguments given [%s]" % (str(coord))
 
-        retval = get_region(self.__states, *region)
+        retval = get_region(self.__states, region, self.is_cyclic())
         if any(retval != 0):
             raise RuntimeError, "Already occupied."
 
@@ -168,21 +167,21 @@ class Track(object):
             self.__domains[did] = dom
             self.__dserial_did_map[dom.serial()] = did
 
-        set_region(self.__states, did, *region)
+        set_region(self.__states, did, region, self.is_cyclic())
 
     def remove_domain(self, *coord):
         if len(coord) == 3:
-            region = (coord[0], coord[1], coord[2], self.is_cyclic())
+            region = coord
         elif len(coord) == 1:
-            region = (coord[0], coord[0], +1, self.is_cyclic())
+            region = (coord[0], coord[0], +1)
         else:
             raise RuntimeError, "Invalid arguments given [%s]" % (str(coord))
 
-        substates = get_region(self.__states, *region).copy()
+        substates = get_region(self.__states, region, self.is_cyclic()).copy()
         if any(substates == 0):
             raise RuntimeError, "No domain assigned."
 
-        set_region(self.__states, 0, *region)
+        set_region(self.__states, 0, region, self.is_cyclic())
 
         retval = []
         for did in set(substates):
@@ -229,9 +228,7 @@ class Track(object):
     #         return self.__domains[did]
 
     def query_domains_by_region(self, *coord):
-        (start, end, stride) = coord
-
-        substates = get_region(self.__states, start, end, stride, self.is_cyclic())
+        substates = get_region(self.__states, coord, self.is_cyclic())
         return list(set([self.__domains[did] for did in substates if did != 0]))
 
 class AlignmentSpace(object):

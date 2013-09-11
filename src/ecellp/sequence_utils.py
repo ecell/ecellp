@@ -37,8 +37,8 @@ def resolve_coordinate(coord, len_seq, is_cyclic = False):
         raise ValueError, "A coordinate must be non-zero [%s]." % (coord)
     return (coord - 1) % len_seq
 
-def get_region(seq, *region):
-    (start, end, stride, is_cyclic) = region
+def get_region(seq, region, is_cyclic = False):
+    (start, end, stride) = region
     start, end = (
         resolve_coordinate(start, len(seq), is_cyclic),
         resolve_coordinate(end, len(seq), is_cyclic))
@@ -62,11 +62,11 @@ def get_region(seq, *region):
     else:
         raise RuntimeError, "A stride must be non-zero."
 
-def set_region(seq, value, *region):
-    map_region(lambda x: value, seq, *region)
+def set_region(seq, value, region, is_cyclic = False):
+    map_region(lambda x: value, seq, region, is_cyclic)
 
-def map_region(func, seq, *region):
-    (start, end, stride, is_cyclic) = region
+def map_region(func, seq, region, is_cyclic = False):
+    (start, end, stride) = region
     start, end = (
         resolve_coordinate(start, len(seq), is_cyclic),
         resolve_coordinate(end, len(seq), is_cyclic))
