@@ -141,7 +141,7 @@ def test7(algn, comp):
     cdom1 = domain.ConditionalDomain("SFBS")
     cdom1.add_condition(
         domain.Condition(
-            0, +29, excludes = [domain.FilteringDomain(type = "MOLECULE")]))
+            0, +29, excludes = [domain.Domain(type = "MOLECULE")]))
     rr2 = core.SecondOrderInteraction(cdom1, domain.Domain("SIGMA"), None, 1.0)
 
     for rr in (rr1, rr2, ):

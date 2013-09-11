@@ -7,7 +7,7 @@ __license__ = ''
 
 class Domain(object):
 
-    def __init__(self, name, **attrs):
+    def __init__(self, name = "", **attrs):
         self.__name = name
         self.__attributes = {}
 
@@ -25,29 +25,15 @@ class Domain(object):
         return self.__attributes
 
     def serial(self):
-        return self.name()
+        # return self.name()
+        return str(dict(self.__attributes, name = self.__name))
 
     def name(self):
         return self.__name
 
-    def match(self, dom, parent):
-        return dom.name() == self.name()
+    def match(self, dom, parent = None):
+        # return dom.name() == self.name()
 
-    def as_Domain(self):
-        return Domain(self.name(), **self.attributes())
-
-    def __repr__(self):
-        mod = self.__class__.__module__
-        cls = self.__class__.__name__
-        # mem = '0x' + hex(id(self))[2:].zfill(8).upper()
-        return '<{0}.{1} instance with serial "{2}">'.format(mod, cls, self.serial())
-
-class FilteringDomain(Domain):
-
-    def __init__(self, name = "", **attrs):
-        Domain.__init__(self, name, **attrs)
-
-    def match(self, dom, parent):
         if self.name() is not "" and self.name() != dom.name():
             return False
 
@@ -56,6 +42,15 @@ class FilteringDomain(Domain):
                 return False
         else:
             return True
+
+    def as_Domain(self):
+        return Domain(self.name(), **self.attributes())
+
+    def __repr__(self):
+        mod = self.__class__.__module__
+        cls = self.__class__.__name__
+        # mem = '0x' + hex(id(self))[2:].zfill(8).upper()
+        return '<{0}.{1} instance with serial "{2}">'.format(mod, cls, self.name())
 
 class Condition(object):
 
@@ -67,7 +62,7 @@ class Condition(object):
         self.__includes = includes
         self.__excludes = excludes
 
-    def match(self, dom, parent):
+    def match(self, dom, parent = None):
         start = dom.get_attribute("start")
         stride = dom.get_attribute("stride")
         region = (
@@ -103,7 +98,7 @@ class ConditionalDomain(Domain):
                 retval.append(dom)
         return retval
 
-    def match(self, dom, parent):
+    def match(self, dom, parent = None):
         if not self.as_Domain().match(dom, parent):
             return False
 

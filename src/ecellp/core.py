@@ -137,18 +137,18 @@ class Track(object):
                 retval.append(elem)
         return retval
 
-    def num_molecules(self, dom):
-        did = self.__dserial_did_map.get(dom.serial())
-        if did is None:
-            return 0
-        else:
-            return sum(self.__states == did)
+    # def num_molecules(self, dom):
+    #     did = self.__dserial_did_map.get(dom.serial())
+    #     if did is None:
+    #         return 0
+    #     else:
+    #         return sum(self.__states == did)
 
-    def place_molecule(self, dom, coord):
-        self.place_domain(dom, coord)
+    # def place_molecule(self, dom, coord):
+    #     self.place_domain(dom, coord)
 
-    def remove_molecule(self, coord):
-        return self.remove_domain(coord)[0]
+    # def remove_molecule(self, coord):
+    #     return self.remove_domain(coord)[0]
 
     def place_domain(self, dom, *coord):
         if len(coord) == 3:
@@ -230,8 +230,9 @@ class Track(object):
 
     def query_domains_by_region(self, *coord):
         (start, end, stride) = coord
-        dids = get_region(self.__states, start, end, stride, self.is_cyclic())
-        return list(set([self.__domains[did] for did in dids if did != 0]))
+
+        substates = get_region(self.__states, start, end, stride, self.is_cyclic())
+        return list(set([self.__domains[did] for did in substates if did != 0]))
 
 class AlignmentSpace(object):
 
@@ -285,11 +286,17 @@ class CompartmentSpace(object):
         return self.__domains
 
     def num_molecules(self, dom):
-        idx = self.__dserial_idx_map.get(dom.serial())
-        if idx is None:
-            return 0
-        else:
-            return self.__num_molecules[idx]
+        retval = 0
+        for elem, num in zip(self.__domains, self.__num_molecules):
+            if dom.match(elem):
+                retval += num
+        return retval
+
+        # idx = self.__dserial_idx_map.get(dom.serial())
+        # if idx is None:
+        #     return 0
+        # else:
+        #     return self.__num_molecules[idx]
 
     def add_molecules(self, dom, num):
         idx = self.__dserial_idx_map.get(dom.serial())
