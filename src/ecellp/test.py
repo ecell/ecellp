@@ -5,12 +5,14 @@ __copyright__ = ''
 __license__ = ''
 
 import core
+import domain
+import sequence_utils
 
 
 def test1(filename):
     algn = core.Alignment(
-        core.read_sequence(filename), name = "pTAK117", type = "PLASMID")
-    print core.format_sequence(algn.sequence())
+        sequence_utils.read_sequence(filename), name = "pTAK117", type = "PLASMID")
+    print sequence_utils.format_sequence(algn.sequence())
     print algn.is_cyclic()
     print algn.size()
     print algn.annotations()
@@ -22,7 +24,7 @@ def test1(filename):
 
 def test2(filename):
     algn = core.Alignment(
-        core.read_sequence(filename), name = "pTAK117", type = "PLASMID")
+        sequence_utils.read_sequence(filename), name = "pTAK117", type = "PLASMID")
 
     print "Ptrc", algn.sequence(11, 98, +1)
     print "PL-s1con", algn.sequence(6067, 5496, -1)
@@ -51,12 +53,12 @@ def test2(filename):
 
 def test3(filename):
     algn = core.Alignment(
-        core.read_sequence(filename), name = "pTAK117", type = "PLASMID")
+        sequence_utils.read_sequence(filename), name = "pTAK117", type = "PLASMID")
     trk = core.Track(algn.size(), algn.is_cyclic())
 
-    trk.place_domain(core.Domain("A"), 1)
-    trk.place_domain(core.Domain("B"), 2)
-    trk.place_domain(core.Domain("A"), 3)
+    trk.place_domain(domain.Domain("A"), 1)
+    trk.place_domain(domain.Domain("B"), 2)
+    trk.place_domain(domain.Domain("A"), 3)
     print trk.list_domains()
     print trk.states()[: 10]
     print "removed", trk.remove_domain(1)
@@ -65,36 +67,36 @@ def test3(filename):
     print "removed", trk.remove_domain(2)
     print trk.list_domains()
     print trk.states()[: 10]
-    trk.place_domain(core.Domain("C"), 1)
-    trk.place_domain(core.Domain("C"), 2)
+    trk.place_domain(domain.Domain("C"), 1)
+    trk.place_domain(domain.Domain("C"), 2)
     print trk.list_domains()
     print trk.states()[: 10]
     print trk.query_domains_by_region(1, 2, +1)
     print trk.query_domains_by_region(1, 3, +1)
-    trk.place_domain(core.Domain("D"), 4, 8, +1)
+    trk.place_domain(domain.Domain("D"), 4, 8, +1)
     print trk.states()[: 10], trk.list_domains()
 
 def test4(filename):
     algn = core.Alignment(
         core.read_sequence(filename), name = "pTAK117", type = "PLASMID")
 
-    algn.place_domain(core.Domain("Ptrc", type = "PROMOTER"), 11, 98, +1)
-    algn.place_domain(core.Domain("PL-s1con", type = "PROMOTER"), 6067, 5496, -1)
-    algn.place_domain(core.Domain("CI", type = "GENE"), 99, 714, +1)
-    algn.place_domain(core.Domain("GFP", type = "GENE"), 914, 1630, +1)
-    algn.place_domain(core.Domain("LacI", type = "GENE"), 5489, 4407, -1)
-    algn.place_domain(core.Domain("rrn T1", type = "TERMINATOR"), 1846, 1889, +1)
-    algn.place_domain(core.Domain("rrn T2", type = "TERMINATOR"), 2021, 2048, +1)
-    algn.place_domain(core.Domain("rrn T1", type = "TERMINATOR"), -1903, -1946, -1)
-    algn.place_domain(core.Domain("rrn T2", type = "TERMINATOR"), -2078, -2105, -1)
-    algn.place_domain(core.Domain("TSS", type = "TSS"), 60, 60, +1) # TSS1
-    algn.place_domain(core.Domain("TSS", type = "TSS"), -94, -94, -1) # TSS2
-    algn.place_domain(core.Domain("Olac", type = "OPERATOR"), 60, 81, +1)
-    algn.place_domain(core.Domain("OL3", type = "OPERATOR"), 6061, 6045, -1)
-    algn.place_domain(core.Domain("OL2", type = "OPERATOR"), 6040, 6025, -1)
-    algn.place_domain(core.Domain("OL1", type = "OPERATOR"), 6016, 6001, -1)
-    algn.place_domain(core.Domain("SFBS", type = "SFBS"), 24, 53, +1)
-    algn.place_domain(core.Domain("SFBS", type = "SFBS"), 6027, 5999, -1)
+    algn.place_domain(domain.Domain("Ptrc", type = "PROMOTER"), 11, 98, +1)
+    algn.place_domain(domain.Domain("PL-s1con", type = "PROMOTER"), 6067, 5496, -1)
+    algn.place_domain(domain.Domain("CI", type = "GENE"), 99, 714, +1)
+    algn.place_domain(domain.Domain("GFP", type = "GENE"), 914, 1630, +1)
+    algn.place_domain(domain.Domain("LacI", type = "GENE"), 5489, 4407, -1)
+    algn.place_domain(domain.Domain("rrn T1", type = "TERMINATOR"), 1846, 1889, +1)
+    algn.place_domain(domain.Domain("rrn T2", type = "TERMINATOR"), 2021, 2048, +1)
+    algn.place_domain(domain.Domain("rrn T1", type = "TERMINATOR"), -1903, -1946, -1)
+    algn.place_domain(domain.Domain("rrn T2", type = "TERMINATOR"), -2078, -2105, -1)
+    algn.place_domain(domain.Domain("TSS", type = "TSS"), 60, 60, +1) # TSS1
+    algn.place_domain(domain.Domain("TSS", type = "TSS"), -94, -94, -1) # TSS2
+    algn.place_domain(domain.Domain("Olac", type = "OPERATOR"), 60, 81, +1)
+    algn.place_domain(domain.Domain("OL3", type = "OPERATOR"), 6061, 6045, -1)
+    algn.place_domain(domain.Domain("OL2", type = "OPERATOR"), 6040, 6025, -1)
+    algn.place_domain(domain.Domain("OL1", type = "OPERATOR"), 6016, 6001, -1)
+    algn.place_domain(domain.Domain("SFBS", type = "SFBS"), 24, 53, +1)
+    algn.place_domain(domain.Domain("SFBS", type = "SFBS"), 6027, 5999, -1)
     print algn.num_domains()
 
     doms = algn.query_domains_by_region(-50, 50, +1)
@@ -109,38 +111,38 @@ def test4(filename):
 def test5(filename):
     pool = core.CompartmentSpace(1e-18)
     print pool.volume()
-    pool.add_molecules(core.Domain("A"), 10)
-    pool.add_molecules(core.Domain("B"), 30)
+    pool.add_molecules(domain.Domain("A"), 10)
+    pool.add_molecules(domain.Domain("B"), 30)
     print pool.list_domains()
-    print pool.num_molecules(core.Domain("A"))
-    print pool.num_molecules(core.Domain("B"))
-    pool.remove_molecules(core.Domain("B"), 15)
-    pool.remove_molecules(core.Domain("A"), 10)
+    print pool.num_molecules(domain.Domain("A"))
+    print pool.num_molecules(domain.Domain("B"))
+    pool.remove_molecules(domain.Domain("B"), 15)
+    pool.remove_molecules(domain.Domain("A"), 10)
     print pool.list_domains()
-    print pool.num_molecules(core.Domain("A"))
-    print pool.num_molecules(core.Domain("B"))
+    print pool.num_molecules(domain.Domain("A"))
+    print pool.num_molecules(domain.Domain("B"))
 
 def test6():
     volume = 1e-18
     comp = core.CompartmentSpace(volume)
-    comp.add_molecules(core.Domain("RNAP", type = "MOLECULE"), 2000)
-    comp.add_molecules(core.Domain("SIGMA", type = "MOLECULE"), 1000)
+    comp.add_molecules(domain.Domain("RNAP", type = "MOLECULE"), 2000)
+    comp.add_molecules(domain.Domain("SIGMA", type = "MOLECULE"), 1000)
     return comp
 
 def test7(algn, comp):
     trk = algn.create_track("Binding proteins")
-    trk.place_domain(core.Domain("SIGMA", type = "MOLECULE"), 50)
+    trk.place_domain(domain.Domain("SIGMA", type = "MOLECULE"), 50)
 
-    cdom1 = core.ConditionalDomain("TSS")
+    cdom1 = domain.ConditionalDomain("TSS")
     cdom1.add_condition(
-        core.Condition(-40, 0, includes = [core.Domain("SIGMA")]))
-    rr1 = core.SecondOrderInteraction(cdom1, core.Domain("RNAP"), None, 1.0)
+        domain.Condition(-40, 0, includes = [domain.Domain("SIGMA")]))
+    rr1 = core.SecondOrderInteraction(cdom1, domain.Domain("RNAP"), None, 1.0)
 
-    cdom1 = core.ConditionalDomain("SFBS")
+    cdom1 = domain.ConditionalDomain("SFBS")
     cdom1.add_condition(
-        core.Condition(
-            0, +29, excludes = [core.FilteringDomain(type = "MOLECULE")]))
-    rr2 = core.SecondOrderInteraction(cdom1, core.Domain("SIGMA"), None, 1.0)
+        domain.Condition(
+            0, +29, excludes = [domain.FilteringDomain(type = "MOLECULE")]))
+    rr2 = core.SecondOrderInteraction(cdom1, domain.Domain("SIGMA"), None, 1.0)
 
     for rr in (rr1, rr2, ):
         r1, r2 = rr.reactants()

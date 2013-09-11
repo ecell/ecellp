@@ -7,99 +7,17 @@ __license__ = ''
 import copy
 import numpy
 
+from sequence_utils import *
 
-def read_sequence(filename):
-    seq = ""
-    with open(filename, "r") as fin:
-        while True:
-            line = fin.readline()
-            if line == "":
-                break
-            line = line.strip()
-            seq += line
-    return seq
 
-def format_sequence(seq):
-    formatted = ""
-    start, stride1, stride2 = 0, 10, 6
-    while start < len(seq):
-        s = ' '.join([
-            seq[start + i * stride1: start + (i + 1) * stride1]
-            for i in range(stride2)])
-        s += " " * ((stride1 + 1) * stride2 - 1 - len(s))
-        formatted += "%05d %s %05d\n" % (start + 1, s, start + stride1 * stride2)
-        start += stride1 * stride2
-    return formatted[: -1]
+class IDGenerator(object):
 
-def resolve_coordinate(coord, len_seq, is_cyclic = False):
-    if not is_cyclic:
-        if not 0 < coord <= len_seq:
-            raise ValueError, "Invalid coordinate was given [%s]." % (coord)
-    elif coord == 0:
-        raise ValueError, "A coordinate must be non-zero [%s]." % (coord)
-    return (coord - 1) % len_seq
+    def __init__(self, stride = 0):
+        self.__stride = stride
 
-def get_region(seq, *region):
-    (start, end, stride, is_cyclic) = region
-    start, end = (
-        resolve_coordinate(start, len(seq), is_cyclic),
-        resolve_coordinate(end, len(seq), is_cyclic))
-
-    if stride > 0:
-        if end >= start:
-            return seq[start: end + 1: stride]
-        elif is_cyclic:
-            return seq[start: : stride] + seq[: end + 1: stride]
-        else:
-            raise RuntimeError, "Invalid coordinate was given [%s]" % (
-                region[: -1], )
-    elif stride < 0:
-        if start >= end:
-            return seq[end: start + 1: -stride]
-        elif is_cyclic:
-            return seq[end: : -stride] + seq[: start + 1: -stride]
-        else:
-            raise RuntimeError, "Invalid coordinate was given [%s]" % (
-                region[: -1], )
-    else:
-        raise RuntimeError, "A stride must be non-zero."
-
-def set_region(seq, value, *region):
-    map_region(lambda x: value, seq, *region)
-
-def map_region(func, seq, *region):
-    (start, end, stride, is_cyclic) = region
-    start, end = (
-        resolve_coordinate(start, len(seq), is_cyclic),
-        resolve_coordinate(end, len(seq), is_cyclic))
-
-    if stride > 0:
-        if end >= start:
-            for i in range(start, end + 1, stride):
-                seq[i] = func(seq[i])
-        elif is_cyclic:
-            for i in range(start, len(seq), stride) + range(0, end + 1, stride):
-                seq[i] = func(seq[i])
-        else:
-            raise RuntimeError, "Invalid coordinate was given [%s]" % (
-                region[: -1], )
-    elif stride < 0:
-        if start >= end:
-            for i in range(end, start + 1, -stride):
-                seq[i] = func(seq[i])
-        elif is_cyclic:
-            for i in range(end, len(seq), -stride) + range(0, start + 1, -stride):
-                seq[i] = func(seq[i])
-        else:
-            raise RuntimeError, "Invalid coordinate was given [%s]" % (
-                region[: -1], )
-    else:
-        raise RuntimeError, "A stride must be non-zero."
-
-def reverse_sequence(seq):
-    return ''.join([
-        'A' if c is 'T' else 'T' if c is 'A' else 'G' if c is 'C' else 'C'
-        for c in seq[: : -1]])
+    def __call__(self):
+        self.__stride += 1
+        return self.__stride
 
 class Alignment(object):
 
@@ -400,123 +318,6 @@ class CompartmentSpace(object):
             self.__domains.pop()
             self.__num_molecules.pop()
             del self.__dserial_idx_map[dom.serial()]
-
-class IDGenerator(object):
-
-    def __init__(self, stride = 0):
-        self.__stride = stride
-
-    def __call__(self):
-        self.__stride += 1
-        return self.__stride
-
-class Domain(object):
-
-    def __init__(self, name, **attrs):
-        self.__name = name
-        self.__attributes = {}
-
-        self.set_attributes(**attrs)
-
-    def set_attributes(self, **attrs):
-        if "name" in attrs.keys():
-            raise RuntimeError, 'Do not overload "name"'
-        self.__attributes.update(attrs)
-
-    def get_attribute(self, key):
-        return self.__attributes.get(key)
-
-    def attributes(self):
-        return self.__attributes
-
-    def serial(self):
-        return self.name()
-
-    def name(self):
-        return self.__name
-
-    def match(self, dom, parent):
-        return dom.name() == self.name()
-
-    def as_Domain(self):
-        return Domain(self.name(), **self.attributes())
-
-    def __repr__(self):
-        mod = self.__class__.__module__
-        cls = self.__class__.__name__
-        # mem = '0x' + hex(id(self))[2:].zfill(8).upper()
-        return '<{0}.{1} instance with serial "{2}">'.format(mod, cls, self.serial())
-
-class Condition(object):
-
-    def __init__(self, left, right, includes = [], excludes = []):
-        if len(includes) == 0 and len(excludes) == 0:
-            raise RuntimeError, ""
-
-        self.__bounds = (left, right)
-        self.__includes = includes
-        self.__excludes = excludes
-
-    def match(self, dom, parent):
-        start = dom.get_attribute("start")
-        stride = dom.get_attribute("stride")
-        region = (
-            start + self.__bounds[0] * stride,
-            start + self.__bounds[1] * stride,
-            stride)
-        neighbors = parent.query_domains_by_region(*region)
-
-        # do more precise filtering before checking
-
-        for elem in self.__includes:
-            if not any([elem.match(neighbor, parent) for neighbor in neighbors]):
-                return False
-        for elem in self.__excludes:
-            if any([elem.match(neighbor, parent) for neighbor in neighbors]):
-                return False
-        return True
-
-class FilteringDomain(Domain):
-
-    def __init__(self, name = "", **attrs):
-        Domain.__init__(self, name, **attrs)
-
-    def match(self, dom, parent):
-        if self.name() is not "" and self.name() != dom.name():
-            return False
-
-        for key, value in self.attributes().items():
-            if dom.get_attribute(key) != value:
-                return False
-        else:
-            return True
-
-class ConditionalDomain(Domain):
-
-    def __init__(self, name, **attrs):
-        Domain.__init__(self, name, **attrs)
-
-        self.__conditions = []
-
-    def add_condition(self, condition):
-        self.__conditions.append(condition)
-
-    def find(self, parent):
-        retval = []
-        for dom in parent.list_domains(self.as_Domain()):
-            if self.match(dom, parent):
-                retval.append(dom)
-        return retval
-
-    def match(self, dom, parent):
-        if not self.as_Domain().match(dom, parent):
-            return False
-
-        for condition in self.__conditions:
-            if not condition.match(dom, parent):
-                return False
-        else:
-            return True
 
 class SecondOrderInteraction(object):
 
