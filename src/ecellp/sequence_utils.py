@@ -29,6 +29,22 @@ def format_sequence(seq):
         start += stride1 * stride2
     return formatted[: -1]
 
+def complement_region(region, len_seq = None, is_cyclic = False):
+    if type(region) is int:
+        region = (region, )
+
+    if len(region) == 3 and region[2] != 0:
+        return region
+    elif len(region) == 2:
+        return complement_region((region[0], region[1], +1), len_seq, is_cyclic)
+    elif len(region) == 1:
+        return complement_region((region[0], region[0]), len_seq, is_cyclic)
+    elif len(region) == 0 and len_seq is not None:
+        retval = complement_region((1, len_seq), len_seq, is_cyclic)
+        return retval
+    else:
+        raise ValueError, "Invalid format [%s]" % str(region)
+
 def resolve_coordinate(coord, len_seq, is_cyclic = False):
     if not is_cyclic:
         if not 0 < coord <= len_seq:
@@ -38,7 +54,7 @@ def resolve_coordinate(coord, len_seq, is_cyclic = False):
     return (coord - 1) % len_seq
 
 def get_region(seq, region, is_cyclic = False):
-    (start, end, stride) = region
+    (start, end, stride) = complement_region(region, len(seq), is_cyclic)
     start, end = (
         resolve_coordinate(start, len(seq), is_cyclic),
         resolve_coordinate(end, len(seq), is_cyclic))
@@ -66,7 +82,7 @@ def set_region(seq, value, region, is_cyclic = False):
     map_region(lambda x: value, seq, region, is_cyclic)
 
 def map_region(func, seq, region, is_cyclic = False):
-    (start, end, stride) = region
+    (start, end, stride) = complement_region(region, len(seq), is_cyclic)
     start, end = (
         resolve_coordinate(start, len(seq), is_cyclic),
         resolve_coordinate(end, len(seq), is_cyclic))
