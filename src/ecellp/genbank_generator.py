@@ -1,14 +1,13 @@
 import re
-import os
-
 from Bio import SeqIO
-
 import species
 
 
 class GenbankDecGenerator(object):
 
     def __init__(self, filename):
+        self.__url = ("http://ftp.ncbi.nih.gov/genomes/Bacteria/"
+                      "Escherichia_coli_K_12_substr__MG1655_uid57779/NC_000913.gbk")
         self.__filename = filename
 
     def generate(self, session):
