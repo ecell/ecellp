@@ -51,7 +51,7 @@ python setup.py test
 Sample code is `query_test.py` in `samples` directory.
 
 ```
-PYTHONPATH=${PREFIX}/lib/python2.7/site-packages
+PYTHONPATH=${PREFIX}/lib/python2.7/site-packages #not necessary for virtualenv
 python samples/query_test.py
 ```
 
