@@ -18,5 +18,8 @@
 # conf
 conf.ini
 
+# egg
+ecellp.egg-info/
+
 <<<<<<< HEAD
 >>>>>>> versioncheck
