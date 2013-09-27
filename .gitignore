@@ -18,8 +18,10 @@
 # conf
 conf.ini
 
-# egg
+# setuptools
 ecellp.egg-info/
+build/
+dist/
 
 <<<<<<< HEAD
 >>>>>>> versioncheck
