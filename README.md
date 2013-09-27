@@ -18,9 +18,8 @@ Add **absolute** project root path into `conf.ini`.
 APP_ROOT=/Users/yukke/dev/DB4E-Cell-P
 ```
 
-### Install the library #NOT recommended
+### Install as python library #NOT recommended
 ```
-python setup.py test # Run test
 python setup.py install --prefix=${PREFIX} 
 ```
 
@@ -30,17 +29,22 @@ Install virtualenv
 pip install viratualenv virtualenvwrapper
 ```
 Added the following in `.zshrc` or `.bashrc`
-```shell
+```bash
 export WORKON_HOME=$HOME/.virtualenvs
-if [ -f $HOME/.pythonbrew/pythons/Python-2.7.5/bin/virtualenvwrapper.sh ]; then
-   source $HOME/.pythonbrew/pythons/Python-2.7.5/bin/virtualenvwrapper.sh
+if [ -f path_to_your_env/bin/virtualenvwrapper.sh ]; then
+   source path_to_your_env/bin/virtualenvwrapper.sh
 fi
 ```
-Into virtualenv and add ${PYTHONPATH} to this project directory
+Into virtualenv and add `${PYTHONPATH}` to this project directory
 ```
 mkvirtualenv ecellp
 workon ecellp
 add2virtualenv "/home/soh.i/E-cell_Sprint/ecellp/src"
+```
+
+## Run test
+```bash
+python setup.py test 
 ```
 
 ## Running
