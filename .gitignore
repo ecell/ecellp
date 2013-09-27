@@ -7,16 +7,16 @@
 # emacs
 *~
 
+# DB
+*.db
+*.sqlite3
+*.sqlite
+
 # MacOS
 .DS_Store
 
-# data
-data
+# conf
+conf.ini
 
 <<<<<<< HEAD
-# database
-db
-=======
-#local
-local
 >>>>>>> versioncheck

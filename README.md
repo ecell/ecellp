@@ -1,10 +1,55 @@
-Database project for E-Cell 4 P
+E-Cell P: Database project for whole cell simulation in _E. coli_
 ===========
-Install dependencies
------------
-pip install -r requeirements.txt
+## Description 
+Providing generating database class and query/filter DB interfaces for running simulation model
 
-How to generate SQLite DB
------------
-put Required files in "data" folder and 
-create folder named "db"
+## Installation
+
+### Install dependencies
+```
+sudo apt-get install libsqlite3-dev
+
+pip install --install-option="--prefix=${PREFIX}" -r requeirements.txt
+```
+
+### Configuration file
+Add **absolute** project root path into `conf.ini`.
+```ini
+[root]
+APP_ROOT=/Users/yukke/dev/DB4E-Cell-P
+```
+
+### Install the library
+```
+python setup.py test
+
+python setup.py install --prefix=${PREFIX}
+```
+
+## Running
+Sample code is `query_test.py` in `samples` directory.
+
+```
+PYTHONPATH=${PREFIX}/lib/python2.7/site-packages python samples/query_test.py
+```
+
+### Query genome sequence and annotations
+```python
+from ecellp import session
+query = session.QueryBuilder('./conf.ini') # PATH TO conf.ini
+
+print query.count_stored_records()
+#=> 4145
+
+print query.collect_cds_records()
+#=> return All CDS annotations ans its sequences
+
+print query.find_by_name('thrL')
+#=> <Species('thrL','1','189','255','CDS','ATGAAACGCATTACCACCACCAT...')>
+
+print query.collect_annotations_filter_by_strand(-1)
+#=> return annotations and sequence on complement strand
+
+print query.include_gene_in_region(21, 2012)
+#=> [u'thrL', u'thrA']
+```
