@@ -19,9 +19,11 @@ import regulondb_generator
 def generate_decs(session, conf):
     gen = genbank_generator.GenbankDecGenerator(conf.GENBANK_FILE)
     gen.generate(session)
+    
     gen = regulondb_generator.RegulonDBPromoterDecGenerator(
         conf.PROMOTER_FILE)
     gen.generate(session)
+    
     gen = regulondb_generator.RegulonDBPromoterDecGenerator(
         conf.TERMINATOR_FILE)
     gen.generate(session)
