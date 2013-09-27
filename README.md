@@ -8,8 +8,7 @@ Providing generating database class and query/filter DB interfaces for running s
 ### Install dependencies
 ```
 sudo apt-get install libsqlite3-dev
-
-pip install --install-option="--prefix=${PREFIX}" -r requeirements.txt
+pip install --install-option="--prefix=${PREFIX}" -r requeirements.txt #if non-root user
 ```
 
 ### Configuration file
@@ -22,7 +21,6 @@ APP_ROOT=/Users/yukke/dev/DB4E-Cell-P
 ### Install the library
 ```
 python setup.py test
-
 python setup.py install --prefix=${PREFIX}
 ```
 
@@ -30,7 +28,8 @@ python setup.py install --prefix=${PREFIX}
 Sample code is `query_test.py` in `samples` directory.
 
 ```
-PYTHONPATH=${PREFIX}/lib/python2.7/site-packages python samples/query_test.py
+PYTHONPATH=${PREFIX}/lib/python2.7/site-packages
+python samples/query_test.py
 ```
 
 ### Query genome sequence and annotations
