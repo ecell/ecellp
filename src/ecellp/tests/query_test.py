@@ -8,6 +8,7 @@ class QuerytoBuilderTest(unittest.TestCase):
     
     def setUp(self):
         data = '../../../conf.ini'
+        #data = "conf.ini" # if python setup.py test at root directory
         self.query = session.QueryBuilder(data)
         
     def tearDown(self):
