@@ -1,10 +1,10 @@
 import re
 from Bio import SeqIO
 import species
-
+import utils
+import os.path
 
 class GenbankDecGenerator(object):
-
     def __init__(self, filename):
         self.__url = ("http://ftp.ncbi.nih.gov/genomes/Bacteria/"
                       "Escherichia_coli_K_12_substr__MG1655_uid57779/NC_000913.gbk")
@@ -17,6 +17,9 @@ class GenbankDecGenerator(object):
             return utils.fetch_url(self.__url, self.__filename)
 
     def generate(self, session):
+        if not self.setup():
+            raise RuntimeError, "File [%s] not found." % (self.__filename)
+
         with open(self.__filename, "r") as fin:
             for record in SeqIO.parse(fin, 'genbank'):
                 for feature in record.features:
