@@ -1,4 +1,4 @@
-E-Cell4 P: Database project for whole cell simulation in _E. coli_
+E-Cell P: Database project for whole cell simulation in _E. coli_
 ===========
 ## Description 
 Providing generating database class and query/filter DB interfaces for running simulation model
