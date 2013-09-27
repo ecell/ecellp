@@ -8,7 +8,7 @@ Providing generating database class and query/filter DB interfaces for running s
 ### Install dependencies
 ```
 sudo apt-get install libsqlite3-dev
-pip install --install-option="--prefix=${PREFIX}" -r requeirements.txt #if non-root user
+pip install --install-option="--prefix=${PREFIX}" -r requeirements.txt # if non-root user
 ```
 
 ### Configuration file
@@ -18,10 +18,33 @@ Add **absolute** project root path into `conf.ini`.
 APP_ROOT=/Users/yukke/dev/DB4E-Cell-P
 ```
 
-### Install the library
+### Install as python library #NOT recommended
 ```
-python setup.py test
-python setup.py install --prefix=${PREFIX}
+python setup.py install --prefix=${PREFIX} 
+```
+
+### Install for virtualenv
+Install virtualenv
+```
+pip install viratualenv virtualenvwrapper
+```
+Added the following in `.zshrc` or `.bashrc`
+```bash
+export WORKON_HOME=$HOME/.virtualenvs
+if [ -f path_to_your_env/bin/virtualenvwrapper.sh ]; then
+   source path_to_your_env/bin/virtualenvwrapper.sh
+fi
+```
+Into virtualenv and add `${PYTHONPATH}` to this project directory
+```
+mkvirtualenv ecellp
+workon ecellp
+add2virtualenv "/home/soh.i/E-cell_Sprint/ecellp/src"
+```
+
+## Run test
+```bash
+python setup.py test 
 ```
 
 ## Running
