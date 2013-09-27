@@ -9,7 +9,7 @@ class RegulonDBPromoterDecGenerator(object):
 
     def __init__(self, filename):
         self.__url = ("http://regulondb.ccg.unam.mx/"
-            "menu/download/datasets/files/PromoterSet.txt")
+                      "menu/download/datasets/files/PromoterSet.txt")
         self.__filename = filename
 
     def setup(self):
