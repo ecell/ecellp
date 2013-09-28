@@ -119,7 +119,18 @@ class QueryBuilder(Mapper):
 
     def count_stored_records(self):
         return self.session.query(species.CDSDec).filter(species.CDSDec.start).count()
+    
 
+    def dump(self):
+        all_recs = []
+        pass
+    
+    def collect_tran_records(self):
+        trnas = []
+        for row in self.session.query(species.tRNADec).all():
+            trnas.append(row.name)
+        return trnas
+            
     def collect_cds_records(self):
         all_rec = []
         for row in self.session.query(species.CDSDec).all():
