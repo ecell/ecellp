@@ -18,6 +18,9 @@
 # conf
 conf.ini
 
+#data 
+data/*
+
 # setuptools
 ecellp.egg-info/
 build/
