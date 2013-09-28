@@ -14,6 +14,11 @@ class QuerytoBuilderTest(unittest.TestCase):
     def tearDown(self):
         print "Done"
         
+
+    def test_collect_tran_records(self):
+        rec = self.query.collect_tran_records()
+        self.assertEqual(len(rec), 89)
+        
     def test_count_stored_records(self):
         rec_count = self.query.count_stored_records()
         self.assertEqual(rec_count, 4145)
