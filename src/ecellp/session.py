@@ -83,8 +83,8 @@ class DBConfig(object):
 
 class Mapper(object):
 
-    def __init__(self, filename):
-        self.conf = DBConfig(filename)
+    def __init__(self, db_config):
+        self.conf = db_config
 
         if os.path.isfile(self.conf.DB_PATH):
             self.reflection = True
@@ -120,8 +120,8 @@ class Mapper(object):
 
 class QueryBuilder(Mapper):
 
-    def __init__(self, filename):
-        Mapper.__init__(self, filename)
+    def __init__(self, db_config):
+        Mapper.__init__(self, db_config)
 
         self.generate()
 

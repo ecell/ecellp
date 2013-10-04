@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import ecellp.session
-
+import os
 
 def query_test():
     # create Mapper class object (generating DB)
-    data = './conf.ini'
-    query = ecellp.session.QueryBuilder(data)
+    db_config = ecellp.session.DBConfig(os.path.abspath('./conf.ini'))
+    query = ecellp.session.QueryBuilder(db_config)
 
     print query.count_stored_records()
     #print query.collect_cds_records()
