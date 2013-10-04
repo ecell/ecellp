@@ -41,7 +41,7 @@ class DBConfig(object):
 
         conf = ConfigParser.RawConfigParser()
         conf.read(self.__filename)
-        APP_ROOT = conf.get('root', 'APP_ROOT')
+        APP_ROOT = self.find_app_root()
 
         # Read input file
         self.GENBANK_FILE    = APP_ROOT + conf.get('input_data', 'genbank')
@@ -74,6 +74,12 @@ class DBConfig(object):
         for filename in filenames:
             if os.path.isfile(filename):
                 os.remove(filename)
+
+    def find_app_root(self):
+        root = os.path.dirname(__file__)
+        while not os.path.exists(os.path.join(root, 'setup.py')):
+            root = os.path.abspath(os.path.join(root, os.path.pardir))
+        return root
 
 class Mapper(object):
 
