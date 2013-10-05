@@ -126,11 +126,6 @@ class DBConfig(object):
 
         self.DB_PATH         = APP_ROOT + self.DB_PATH
 
-    def is_valid(self, filename):
-        if not os.path.isfile(filename):
-            raise IOError, "%s (wrote in %s) is not found" % (
-                filename, self.__filename)
-
     def cleanup(self):
         # self.__cleanup(
         #     self.CDS_OUT, self.rRNA_OUT, self.tRNA_OUT, self.PROMOTER_OUT,
