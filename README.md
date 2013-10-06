@@ -58,7 +58,16 @@ sequence=/data/test.fa
 ### Query genome sequence and annotations
 ```python
 from ecellp import session
-query = session.QueryBuilder('./conf.ini') # PATH TO conf.ini
+
+db_config = session.DBConfig()
+
+# pass absolute path to your conf.ini
+# db_config = session.DBConfig(file=os.path.abspath('./conf.ini'))
+
+# pass a dict containing paths to your data
+# db_config = session.DBConfig(paths={'sequence':'/data/test.fa'})
+
+query = ecellp.session.QueryBuilder(db_config)
 
 print query.count_stored_records()
 #=> 4145
