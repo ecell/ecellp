@@ -1,6 +1,6 @@
 E-Cell P: Database project for whole cell simulation in _E. coli_
 ===========
-## Description 
+## Description
 Providing generating database class and query/filter DB interfaces for running simulation model
 
 ## Installation
@@ -11,16 +11,9 @@ sudo apt-get install libsqlite3-dev
 pip install --install-option="--prefix=${PREFIX}" -r requeirements.txt # if non-root user
 ```
 
-### Configuration file
-Add **absolute** project root path into `conf.ini`.
-```ini
-[root]
-APP_ROOT=/Users/yukke/dev/DB4E-Cell-P
-```
-
 ### Install as python library #NOT recommended
 ```
-python setup.py install --prefix=${PREFIX} 
+python setup.py install --prefix=${PREFIX}
 ```
 
 ### Install for virtualenv
@@ -44,7 +37,7 @@ add2virtualenv "/home/soh.i/E-cell_Sprint/ecellp/src"
 
 ## Run test
 ```bash
-python setup.py test 
+python setup.py test
 ```
 
 ## Running
@@ -53,6 +46,13 @@ Sample code is `query_test.py` in `samples` directory.
 ```
 PYTHONPATH=${PREFIX}/lib/python2.7/site-packages #not necessary for virtualenv
 python samples/query_test.py
+```
+
+### Configuration file
+Add **relative path** from APP_ROOT to your data files.
+```ini
+[input_data]
+sequence=/data/test.fa
 ```
 
 ### Query genome sequence and annotations
