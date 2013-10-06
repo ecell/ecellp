@@ -67,7 +67,7 @@ db_config = session.DBConfig()
 # pass a dict containing paths to your data
 # db_config = session.DBConfig(paths={'sequence':'/data/test.fa'})
 
-query = ecellp.session.QueryBuilder(db_config)
+query = session.QueryBuilder(db_config)
 
 print query.count_stored_records()
 #=> 4145
