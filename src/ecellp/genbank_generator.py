@@ -35,7 +35,6 @@ class GenbankDecGenerator(object):
 
                             data = (name, strand, start, end, feature, seq)
                             session.add(species.CDSDec(*data))
-                            
                     elif feature.type == 'rRNA':
                         name = feature.qualifiers['gene'][0]
                         start = int(feature.location.start)
@@ -46,7 +45,6 @@ class GenbankDecGenerator(object):
 
                         data = (name, strand, start, end, feature, seq)
                         session.add(species.rRNADec(*data))
-                        
                     elif feature.type == 'tRNA':
                         name = feature.qualifiers['gene'][0]
                         start = int(feature.location.start)
@@ -57,6 +55,6 @@ class GenbankDecGenerator(object):
 
                         data = (name, strand, start, end, feature, seq)
                         session.add(species.tRNADec(*data))
-                        
+
         # Insert to DB
         session.commit()
