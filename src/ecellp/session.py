@@ -33,98 +33,72 @@ sys.path.append(path)
 
 class DBConfig(object):
 
-    def __init__(self, filename=None, paths=None):
-        '''
-        Arguments:
+    def __init__(self, filename=None):
+        '''Arguments:
             filename: OPTIONAL, indicates conf.ini path.
-            paths:    OPTIONAL, a dictionary which contains paths to data.
         '''
+        self.initialize()
 
-        APP_ROOT = self.find_app_root()
+        if filename is not None:
+            self.read(filename)
 
-        # Input files
-        self.GENBANK_FILE = "/data/NC_000913.gbk"
-        self.PROMOTER_FILE = "/data/PromoterSet.txt"
-        self.TERMINATOR_FILE = "/data/TerminatorSet.txt"
-        self.GENOME_SEQUENCE = "/data/test.fa"
+    def find_app_root(self):
+        #XXX: this may cause an infinite loop
+        root = os.path.dirname(__file__)
+        while not os.path.exists(os.path.join(root, 'setup.py')):
+            root = os.path.abspath(os.path.join(root, os.path.pardir))
+        return root
 
-        # Output files
-        # self.CDS_OUT = "/data/CDS_annotation.tbl"
-        # self.rRNA_OUT = "/data/rRNA_annotation.tbl"
-        # self.tRNA_OUT = "/data/tRNA_annotation.tbl"
-        # self.PROMOTER_OUT = "/data/promoter_annotation.tbl"
-        # self.TERMINATOR_OUT = "/data/terminator_annotation.tbl"
+    def initialize(self):
+        # set default values
+        self.set_paths(dict(
+            GENBANK_FILE="data/NC_000913.gbk",
+            PROMOTER_FILE="data/PromoterSet.txt",
+            TERMINATOR_FILE="data/TerminatorSet.txt",
+            GENOME_SEQUENCE="data/test.fa",
+            DB_PATH="data/ecoli.sqlite3"))
 
-        # DB
-        self.DB_PATH = "/data/ecoli.sqlite3"
+    def read(self, filename):
+        if not os.path.isfile(filename):
+            raise (RuntimeError,
+                "Configuration file [%s] is not found" % (filename))
 
-        if filename:
-            self.__filename = filename
-            if not os.path.isfile(self.__filename):
-                raise RuntimeError, "Configuration file [%s] is not found" % (
-                    os.path.abspath(self.__filename))
-            conf = ConfigParser.RawConfigParser()
-            conf.read(self.__filename)
+        filename = os.path.abspath(filename)
 
+        conf = ConfigParser.RawConfigParser()
+        conf.read(filename)
+        paths = {}
+
+        if conf.has_section('input_data'):
             if conf.has_option('input_data', 'genbank'):
-                self.GENBANK_FILE = conf.get('input_data', 'genbank')
+                paths["GENBANK_FILE"] = conf.get('input_data', 'genbank')
             if conf.has_option('input_data', 'promoter'):
-                self.PROMOTER_FILE = conf.get('input_data', 'promoter')
+                paths["PROMOTER_FILE"] = conf.get('input_data', 'promoter')
             if conf.has_option('input_data', 'terminator'):
-                self.TERMINATOR_FILE = conf.get('input_data', 'terminator')
+                paths["TERMINATOR_FILE"] = conf.get('input_data', 'terminator')
             if conf.has_option('input_data', 'sequence'):
-                self.GENOME_SEQUENCE = conf.get('input_data', 'sequence')
+                paths["GENOME_SEQUENCE"] = conf.get('input_data', 'sequence')
 
-            # if conf.has_option('output_data', 'cds'):
-            #     self.CDS_OUT = conf.get('output_data', 'cds')
-            # if conf.has_option('output_data', 'rrna'):
-            #     self.rRNA_OUT = conf.get('output_data', 'rrna')
-            # if conf.has_option('output_data', 'trna'):
-            #     self.tRNA_OUT = conf.get('output_data', 'trna')
-            # if conf.has_option('output_data', 'promoter'):
-            #     self.PROMOTER_OUT = conf.get('output_data', 'promoter')
-            # if conf.has_option('output_data', 'terminator'):
-            #     self.TERMINATOR_OUT = conf.get('output_data', 'terminator')
-
+        if conf.has_section('db'):
             if conf.has_option('db', 'db_path'):
-                self.DB_PATH = conf.get('db', 'db_path')
+                paths["DB_PATH"] = conf.get('db', 'db_path')
 
-        if paths:
-            if ('genbank' in paths.keys()):
-                self.GENBANK_FILE = paths['genbank']
-            if ('promoter_file' in paths.keys()):
-                self.PROMOTER_FILE = paths['promoter_file']
-            if ('terminator_file' in paths.keys()):
-                self.TERMINATOR_FILE = paths['terminator_file']
-            if ('sequence' in paths.keys()):
-                self.GENOME_SEQUENCE = paths['sequence']
+        self.set_paths(paths, os.path.dirname(filename))
+        # self.set_paths(paths)
 
-            # if ('cds_out' in paths.keys()):
-            #     self.CDS_OUT = paths['cds_out']
-            # if ('rrna_out' in paths.keys()):
-            #     self.rRNA_OUT = paths['rrna_out']
-            # if ('trna_out' in paths.keys()):
-            #     self.tRNA_OUT = paths['trna_out']
-            # if ('promoter_out' in paths.keys()):
-            #     self.PROMOTER_OUT = paths['promoter_out']
-            # if ('terminator_out' in paths.keys()):
-            #     self.TERMINATOR_OUT = paths['terminator_out']
+    def set_paths(self, paths, root_path=None):
+        if root_path is None:
+            # root_path = self.find_app_root() # set default
+            root_path = os.getcwd()
 
-            if ('db_path' in paths.keys()):
-                self.DB_PATH = paths['db_path']
-
-        self.GENBANK_FILE = APP_ROOT + self.GENBANK_FILE
-        self.PROMOTER_FILE = APP_ROOT + self.PROMOTER_FILE
-        self.TERMINATOR_FILE = APP_ROOT + self.TERMINATOR_FILE
-        self.GENOME_SEQUENCE = APP_ROOT + self.GENOME_SEQUENCE
-
-        # self.CDS_OUT = APP_ROOT + self.CDS_OUT
-        # self.rRNA_OUT = APP_ROOT + self.rRNA_OUT
-        # self.tRNA_OUT = APP_ROOT + self.tRNA_OUT
-        # self.PROMOTER_OUT = APP_ROOT + self.PROMOTER_OUT
-        # self.TERMINATOR_OUT = APP_ROOT + self.TERMINATOR_OUT
-
-        self.DB_PATH = APP_ROOT + self.DB_PATH
+        accepted = (
+            "GENBANK_FILE", "PROMOTER_FILE", "TERMINATOR_FILE",
+            "GENOME_SEQUENCE", "DB_PATH")
+        for key, value in paths.items():
+            if key not in accepted:
+                raise RuntimeError, "unexpected key [%s] given" % (key)
+            value = os.path.normpath(os.path.join(root_path, value))
+            setattr(self, key, value)
 
     def cleanup(self):
         # self.__cleanup(
@@ -137,12 +111,6 @@ class DBConfig(object):
             if os.path.isfile(filename):
                 os.remove(filename)
 
-    def find_app_root(self):
-        root = os.path.dirname(__file__)
-        while not os.path.exists(os.path.join(root, 'setup.py')):
-            root = os.path.abspath(os.path.join(root, os.path.pardir))
-        return root
-
 class Mapper(object):
 
     def __init__(self, db_config):
@@ -154,6 +122,9 @@ class Mapper(object):
         else:
             self.reflection = False
             # print "DB[%s] is NOT exist" % (self.DB_PATH)
+
+        if not os.path.isdir(os.path.dirname(self.conf.DB_PATH)):
+            os.makedirs(os.path.dirname(self.conf.DB_PATH))
 
         self.engine = create_engine(
             'sqlite:///' + self.conf.DB_PATH, echo=False)

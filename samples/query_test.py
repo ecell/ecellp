@@ -2,6 +2,15 @@
 
 import ecellp.session
 import os
+import sys
+
+def dbconf_test():
+    dbconf = ecellp.session.DBConfig()
+    print dbconf.DB_PATH
+
+    if len(sys.argv) > 1:
+        dbconf = ecellp.session.DBConfig(sys.argv[1])
+        print sys.argv[1], dbconf.DB_PATH
 
 def query_test():
     # create Mapper class object (generating DB)
@@ -16,4 +25,5 @@ def query_test():
 
 
 if __name__ == '__main__':
+    # dbconf_test()
     query_test()

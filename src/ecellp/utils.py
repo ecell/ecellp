@@ -21,6 +21,11 @@ def fetch_url(url, filename):
             return False
     else:
         # everything is fine
+        root_path = os.path.dirname(filename)
+        if not os.path.isdir(root_path):
+            os.makedirs(root_path)
+            print "Made directories [%s]" % (root_path)
+
         print "Dowloading [%s] from [%s] ..." % (
             filename, url)
         with open(filename, "w") as fout:
